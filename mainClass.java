@@ -11,7 +11,7 @@ public class mainClass {
 		
 		int POLYGON_SIZE = 9;
 		int REPEATED_NUMBER = 9;
-		int REPEATED_POLYGON[] = {1,1,1,1,0,0,3,1,1};
+		int REPEATED_POLYGON[] = {1,1,1,1,1,1,1,1,1};
 		
 		for (int i=0; i<REPEATED_NUMBER; i++) 
 		{
@@ -22,8 +22,8 @@ public class mainClass {
 			}
 		}
 		
-		int M = (int) Math.sqrt(POLYGON_SIZE);
-		int N = POLYGON_SIZE / M;
+		int M = 3;
+		int N = 3;
 		
 		OriSFLA originalSFLAObject = new OriSFLA(100, 0.00005, M, N ,olderPolygonFile);
 		try {

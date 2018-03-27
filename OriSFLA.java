@@ -32,8 +32,8 @@ public class OriSFLA
 	public static DecisionStepFitness CalObj;
 	
 	// ######## Constants configuration ########
-	public static int SEQUENCE_SIZE = 28;
-	public static int[] REPEATED_POLYGON = new int[] {4,3,3,3,3,3,3,3,3};
+	public static int SEQUENCE_SIZE = 9;
+	public static int[] REPEATED_POLYGON = new int[] {1,1,1,1,1,1,1,1,1};
 	public static int FRAME_WIDTH = 20;
 	public static int FRAME_HEIGHT = 100;
 	
@@ -229,29 +229,25 @@ public class OriSFLA
 			// [X[0]]-[X[3]]-[X[6]] <-- X[0] is best fitness and X[6] is worse fitness
 			// [X[1]]-[X[4]]-[X[7]]
 			// [X[2]]-[X[5]]-[X[8]]
-			Y1 = ReshapeMatrices1(m, n, X1.clone());
+			Y1 = ReshapeMatrices(m, n, X1.clone());
 			int N = n;
 			
-			for (int im=0; im<m; im++) 
-			{
-				for (int iN=0; iN<N; iN++) 
-				{
+			for (int im=0; im<m; im++) {
+				for (int iN=0; iN<N; iN++) {
+
 					// step3 a construct submemplex
 					int Zidx=0;
+					int checkingPercentage = (int) (0.1*N);
 					FitnessSequence[] Z = null;
 					FitnessSequence Pb=null, Pw=null;
 			        
-					if (n > 2)
-					{
+					if (N > 2) {
 			            int sizeZidx = 1;
-			            while(sizeZidx == 1)
-			            {
-			            	Zidx = n;
+			            while(sizeZidx == 1) {
+			            	Zidx = N;
 			                Z = new FitnessSequence[Zidx];
 			                for (int t = 0; t<Zidx; t++)
-			                {
 			                	Z[t] = Y1[im][t];
-			                }
 			                Pb = Z[0];
 			                Pw = Z[Zidx-1];
 			                sizeZidx = Zidx;
@@ -307,12 +303,11 @@ public class OriSFLA
 			        GenerateTemporaryFile(outputRotatedDemo[selectedIndex], odinary_file_path);
 					SimplePolygon leapingTmpPolygon = new SimplePolygon(new File(odinary_file_path));
 			        
-			        for (int s=2; s<LeapingSequence.length; s++)
+			        for (int s=2; s<LeapingSequence.length; s++) 
 			        {
 			        	SimplePolygon veryTmpPolygon = rawPolygon.get(LeapingSequence[s]);
 			        	leapDegreeCalculate = 0.0f;
-			        	
-			        	for (int rIdx=0; rIdx<NUM_DEGREE_CHECK; rIdx++)
+			        	for (int rIdx=0; rIdx<NUM_DEGREE_CHECK; rIdx++) 
 			        	{
 			        		SimplePolygon staticPolygon = new SimplePolygon(rawPolygon.get(LeapingSequence[s]).directoryPolygon);
 			        		leapRotatedPolygon[rIdx] = RotateCoordinate(staticPolygon, leapDegreeCalculate);
@@ -333,28 +328,21 @@ public class OriSFLA
 			        }
 			        
 			        frameConstObject = new FrameConstraint(FRAME_WIDTH, FRAME_HEIGHT,outputRotatedDemo, selectedIndex);
-//			        BottomLeftPolygon debugTest;
-		        	if (frameConstObject.IsInFrame())
-		        	{
+		        	if (frameConstObject.IsInFrame()) {
 		        		// ---- Insert Collect data [2].
 						fitness = CalculateFitnessValue_2(leapingTmpPolygon, 0, funcType);
-//						debugTest = new BottomLeftPolygon(LeapingSequence, leapingDegreeCode, outputRotatedDemo[selectedIndex]);
 						collectData.CollectTestSequenceData(outputRotatedDemo[selectedIndex], leapingDegreeCode, LeapingSequence, fitness, "leaping");
 						leapingTmpPolygon.setFitnessValue(fitness);
 		        	}
 			        
-			        if (fitness < Pw.fitnessValue && fitness != 0) 
-			        {
+			        if (fitness < Pw.fitnessValue && fitness != 0) {
 			            Z[ZLengthIdx].fitnessValue = fitness;
 			            Z[ZLengthIdx].sequenceNumber = LeapingSequence.clone();
 			        } 
-			        else
-			        {
+			        else {
 			        	// === Step 5 :: if step 4 can not product a better result ===
-			        	switch (randtype) 
-			        	{
-			        		case "uniformdist":
-			        			// ramdomize with uniform distribution
+			        	switch (randtype) {
+			        		case "uniformdist":// ramdomize with uniform distribution
 			        			Rd = randomGenerator.nextInt(n);
 			        			break;
 			                case "truncatedist":
@@ -363,7 +351,6 @@ public class OriSFLA
 			        	}
 			        	PxNet = Px;
 			            PwNet = Pw;
-				        
 			            int[] LeapingPxSequence = new int[Px.sequenceNumber.length];
 			            LeapingPxSequence = CreateLeapingSequenceNormal(Px, Pw, Rd, Smax);
 			            
@@ -376,8 +363,7 @@ public class OriSFLA
 		            	// ############# My mistake addition ############# //
 		            	   ############################################### */
 			            
-//		            	String mistakeFilePath = "C:\\Users\\Nutthakorn Maneewan\\workspace\\Original_SFLA\\resources\\Polytmp2.txt";			            	
-		            	String mistakeFilePath = "C:\\Users\\Nutthakorn Maneewan\\workspace\\Original_SFLA\\resources\\Polytmp";
+			            String mistakeFilePath = "C:\\Users\\Nutthakorn Maneewan\\workspace\\Original_SFLA\\resources\\Polytmp";
 		            	List<List<Edge>>[] mistakeNFP = null;
 		            	SimplePolygon mistakSP = null, mistakeTmpPolygon = null;
 		            	int[] mistakeDegreeCode = new int[SEQUENCE_SIZE];
@@ -410,29 +396,25 @@ public class OriSFLA
 				        	mistakeSelectedIndex = FindMinimumFitness(mistakeFitnessValueStep);
 				        	mistakeDegreeCode[s-1] = mistakeSelectedIndex;
 				        	
-				        	if (mistakeNFP[mistakeSelectedIndex] != null)
-				        	{
+				        	if (mistakeNFP[mistakeSelectedIndex] != null) {
 								GenerateTemporaryFile(mistakeNFP[selectedIndex], mistakeFilePath+".txt");
 								mistakeTmpPolygon = new SimplePolygon(new File(mistakeFilePath+".txt"));
 				        	}
 				        }
 			        	frameConstObject = new FrameConstraint(FRAME_WIDTH, FRAME_HEIGHT, mistakeNFP, selectedIndex);
 						double mistakeFitness = 0.0;
-			        	if (frameConstObject.IsInFrame())
-						{
+			        	if (frameConstObject.IsInFrame()) {
 							fitness = CalculateFitnessValue_2(elseTempPolygon, 0, funcType);
 							mistakeFitness = CalculateFitnessValue_2(mistakeTmpPolygon, 0, funcType);
 							elseTempPolygon.setFitnessValue(mistakeFitness);
 							collectData.CollectTestSequenceData(mistakeNFP[mistakeSelectedIndex], mistakeDegreeCode, LeapingPxSequence, mistakeFitness, "leaping");
 						}
 			        	
-			        	if (mistakeFitness < Pw.fitnessValue && mistakeFitness != 0)
-						{
+			        	if (mistakeFitness < Pw.fitnessValue && mistakeFitness != 0) {
 				            Z[ZLengthIdx].fitnessValue = mistakeFitness;
 				            Z[ZLengthIdx].sequenceNumber = LeapingPxSequence.clone();
 				        }
-			            else 
-			            {
+			            else {
 			            	// === Step 6 Censorship ===
 			            	// ----- Random all 0 to (n-1) to get one of input sequence.
 			            	int idxRandom = randomGenerator.nextInt(n);
@@ -476,24 +458,21 @@ public class OriSFLA
 					        	mistakeSelectedIndex = FindMinimumFitness(mistakeFitnessValueStep);
 					        	mistakeDegreeCode[s-1] = mistakeSelectedIndex;
 					        	
-					        	if (mistakeNFP[mistakeSelectedIndex] != null)
-					        	{
+					        	if (mistakeNFP[mistakeSelectedIndex] != null) {
 									GenerateTemporaryFile(mistakeNFP[selectedIndex], mistakeFilePath+".txt");
 									mistakeTmpPolygon = new SimplePolygon(new File(mistakeFilePath+".txt"));
 					        	}
 					        }
 			    			
 			    			frameConstObject = new FrameConstraint(FRAME_WIDTH, FRAME_HEIGHT,mistakeNFP, selectedIndex);
-							if (frameConstObject.IsInFrame())
-							{
+							if (frameConstObject.IsInFrame()) {
 								// --- Insert collectdata[3].
 								fitness = CalculateFitnessValue_2(randomTmpPolygon, 0, funcType);
 								mistakeFitness = CalculateFitnessValue_2(mistakeTmpPolygon, 0, funcType);
 								randomTmpPolygon.setFitnessValue(mistakeFitness);
 								collectData.CollectTestSequenceData(mistakeNFP[mistakeSelectedIndex], mistakeDegreeCode, randomSequence, mistakeFitness, "leaping");
 				                
-				                if (mistakeFitness < Z[ZLengthIdx].fitnessValue && mistakeFitness != 0) 
-				                { 
+				                if (mistakeFitness < Z[ZLengthIdx].fitnessValue && mistakeFitness != 0) {
 				                    Z[ZLengthIdx].fitnessValue = mistakeFitness;
 				                    Z[ZLengthIdx].sequenceNumber = randomSequence.clone();
 				                }
@@ -512,10 +491,8 @@ public class OriSFLA
 			        
 			        SortedFitAgain = QuickSort(fitn);
 			        FitnessSequence[] forTemporaryFitness = new FitnessSequence[Y1[im].length];
-			        for (int k=0; k<SortedFitAgain[1].length; k++) 
-			        {
+			        for (int k=0; k<SortedFitAgain[1].length; k++)
 			        	forTemporaryFitness[k] = Y1[im][(int) SortedFitAgain[1][k]];
-			        }
 			        Y1[im] = forTemporaryFitness;
 				}
 			}
@@ -524,11 +501,9 @@ public class OriSFLA
 			// === Step 5:: Shuffle memeplexes ===
 			int CounterIdx = 0;
 			FitnessSequence nPx = null;
-			for (int i=0; i<m; i++) 
-			{
+			for (int i=0; i<m; i++)
 				for (int j=0; j<n; j++)
 					X1[CounterIdx++] = Y1[j][i];
-			}
 			
 			double[] fitn = new double[TotalSampleSize];
 			for (int k=0; k<TotalSampleSize; k++)
@@ -537,10 +512,8 @@ public class OriSFLA
 			double[][] SortedFitAgain = new double[2][TotalSampleSize];
 	        SortedFitAgain = QuickSort(fitn);
 	        FitnessSequence[] lastSortedFitness = new FitnessSequence[SortedFitAgain[0].length];
-	        for (int k=0; k<SortedFitAgain[1].length; k++) 
-	        {
+	        for (int k=0; k<SortedFitAgain[1].length; k++)
 	        	lastSortedFitness[k] = X1[(int) SortedFitAgain[1][k]];
-	        }
 	        X1 = lastSortedFitness;
 	
 			nPx = X1[0];
@@ -584,8 +557,7 @@ public class OriSFLA
 		resultObject.allPosition = PXI.clone();
 	}
 	
-	public double[] fix(double[] PxNet, double[] PwNet, double Rd) 
-	{
+	public double[] fix(double[] PxNet, double[] PwNet, double Rd) {
 		double[] stepS = new double[2];
 		stepS[0]  = (PxNet[0] - PwNet[0]) *Rd;
         stepS[1] = (PxNet[1] - PwNet[1])*Rd;
@@ -616,30 +588,11 @@ public class OriSFLA
 		return SummationFormala(inputNumber, funcType); 
 	}
 	
-	public double[][][] ReshapeMatrices(int m, int n,double[][] A)
+	public FitnessSequence[][] ReshapeMatrices(int row, int column,FitnessSequence[] A)
 	{
-		double[][][] Y = new double[m][n][2];
-		for (int i=0; i<m; i++)
-		{
-			for (int j=0; j<n; j++)
-			{
-				Y[j][i][0] = A[m*i+j][0];
-				Y[j][i][1] = A[m*i+j][1];
-			}
-		}
-		return Y;
-	}
-	
-	public FitnessSequence[][] ReshapeMatrices1(int m, int n,FitnessSequence[] A)
-	{
-		FitnessSequence[][] Y = new FitnessSequence[m][n];
-		for (int i=0; i<m; i++) 
-		{
-			for (int j=0; j<n; j++)
-			{
-				Y[j][i] = A[m*i+j];
-			}
-		}
+		FitnessSequence[][] Y = new FitnessSequence[row][column];
+		for (int i=0; i<A.length; i++)
+			Y[i%row][i/row] = A[i];
 		return Y;
 	}
 	
