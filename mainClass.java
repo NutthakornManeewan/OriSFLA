@@ -9,9 +9,9 @@ public class mainClass {
 		List<File> olderPolygonFile = new ArrayList<File>();
 		String olderPolygonFilePath = "C:\\Users\\Nutthakorn Maneewan\\workspace\\Original_SFLA\\resources\\Poly_0";
 		
-		int POLYGON_SIZE = 9;
+		int POLYGON_SIZE = 12;
 		int REPEATED_NUMBER = 9;
-		int REPEATED_POLYGON[] = {1,1,1,1,1,1,1,1,1};
+		int REPEATED_POLYGON[] = {1,1,1,1,2,1,1,2,2};
 		
 		for (int i=0; i<REPEATED_NUMBER; i++) 
 		{

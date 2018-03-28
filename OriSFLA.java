@@ -32,8 +32,8 @@ public class OriSFLA
 	public static DecisionStepFitness CalObj;
 	
 	// ######## Constants configuration ########
-	public static int SEQUENCE_SIZE = 9;
-	public static int[] REPEATED_POLYGON = new int[] {1,1,1,1,1,1,1,1,1};
+	public static int SEQUENCE_SIZE = 12;
+	public static int[] REPEATED_POLYGON = new int[] {1,1,1,1,2,1,1,2,2};
 	public static int FRAME_WIDTH = 20;
 	public static int FRAME_HEIGHT = 100;
 	
@@ -230,21 +230,20 @@ public class OriSFLA
 			// [X[1]]-[X[4]]-[X[7]]
 			// [X[2]]-[X[5]]-[X[8]]
 			Y1 = ReshapeMatrices(m, n, X1.clone());
-			int N = n;
 			
 			for (int im=0; im<m; im++) {
-				for (int iN=0; iN<N; iN++) {
+				for (int iN=0; iN<n; iN++) {
 
 					// step3 a construct submemplex
 					int Zidx=0;
-					int checkingPercentage = (int) (0.1*N);
+					int checkingPercentage = (int) (0.1*(n*m));	// <-- 10 percentage of populations.
 					FitnessSequence[] Z = null;
 					FitnessSequence Pb=null, Pw=null;
 			        
-					if (N > 2) {
+					if (n > 2) {
 			            int sizeZidx = 1;
 			            while(sizeZidx == 1) {
-			            	Zidx = N;
+			            	Zidx = n;
 			                Z = new FitnessSequence[Zidx];
 			                for (int t = 0; t<Zidx; t++)
 			                	Z[t] = Y1[im][t];
@@ -340,6 +339,7 @@ public class OriSFLA
 			            Z[ZLengthIdx].sequenceNumber = LeapingSequence.clone();
 			        } 
 			        else {
+			        	// ************************************************************** Suspect!
 			        	// === Step 5 :: if step 4 can not product a better result ===
 			        	switch (randtype) {
 			        		case "uniformdist":// ramdomize with uniform distribution

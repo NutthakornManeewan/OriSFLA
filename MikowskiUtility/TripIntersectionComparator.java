@@ -12,7 +12,7 @@ public class TripIntersectionComparator implements Comparator<TripIntersection>{
 
 	@Override
 	public int compare(TripIntersection ti1, TripIntersection ti2) {
-		
+		System.out.println("ti1="+ti1.toString() + " | ti2=" + ti2.toString());
 		int tripSequenceDiff = ti1.getIntersectionEdge().getTripSequenceNumber() - ti2.getIntersectionEdge().getTripSequenceNumber();
 		if(tripSequenceDiff != 0) return tripSequenceDiff;
 		//sort in sequence closest to the startpoint
