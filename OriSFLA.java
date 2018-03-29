@@ -32,8 +32,8 @@ public class OriSFLA
 	public static DecisionStepFitness CalObj;
 	
 	// ######## Constants configuration ########
-	public static int SEQUENCE_SIZE = 12;
-	public static int[] REPEATED_POLYGON = new int[] {1,1,1,1,2,1,1,2,2};
+	public static int SEQUENCE_SIZE = 21;
+	public static int[] REPEATED_POLYGON = new int[] {3,3,3,2,2,2,2,2,2};
 	public static int FRAME_WIDTH = 20;
 	public static int FRAME_HEIGHT = 100;
 	
@@ -154,7 +154,6 @@ public class OriSFLA
 	        	else
 	        		continue;
 	        }
-			
 			// -- Insert collect data [1] for collect initial sequence.
 			FITNESS_VALUE[t] = CalculateFitnessValue_2(tmpPolygon, 0, funcType);
 			collectData.CollectTestSequenceData(outputRotatedDemo[selectedIndex], degreeCode[t], TEST_SEQUENCE[t], FITNESS_VALUE[t], "test");
@@ -196,7 +195,10 @@ public class OriSFLA
 		FitnessSequence[][] Y1 = new FitnessSequence[m][n];
 		int[] leapingDegreeCode = new int[SEQUENCE_SIZE];
 		
-		
+		boolean forceThresholdCensorship = false;
+		int thresholdCounter = 0;
+		double previousFitness = 0;
+		int checkingPercentage = (int) (0.1*(n*m));	// <-- 10 percentage of populations.
 		
 		// ************** Real Loop for each Generation ****************** //
 		for (int iTer=0; iTer<MAX_GENERATION; iTer++) {
@@ -223,23 +225,19 @@ public class OriSFLA
 				}
 			}
 			System.out.println("]");
-
 			// === Reshape Zone ===
 			// Change into from
 			// [X[0]]-[X[3]]-[X[6]] <-- X[0] is best fitness and X[6] is worse fitness
 			// [X[1]]-[X[4]]-[X[7]]
 			// [X[2]]-[X[5]]-[X[8]]
-			Y1 = ReshapeMatrices(m, n, X1.clone());
-			
+			Y1 = ReshapeMatrices(m, n, X1.clone());	
+			previousFitness = Y1[0][0].fitnessValue;
 			for (int im=0; im<m; im++) {
 				for (int iN=0; iN<n; iN++) {
-
 					// step3 a construct submemplex
 					int Zidx=0;
-					int checkingPercentage = (int) (0.1*(n*m));	// <-- 10 percentage of populations.
 					FitnessSequence[] Z = null;
 					FitnessSequence Pb=null, Pw=null;
-			        
 					if (n > 2) {
 			            int sizeZidx = 1;
 			            while(sizeZidx == 1) {
@@ -251,8 +249,7 @@ public class OriSFLA
 			                Pw = Z[Zidx-1];
 			                sizeZidx = Zidx;
 			            }
-			        }
-			        
+			        }					
 			        // ===== Step 4 improve the worst frog's position
 			        double Smax = 0.45;
 			        double Rd = 0;
@@ -334,13 +331,15 @@ public class OriSFLA
 						leapingTmpPolygon.setFitnessValue(fitness);
 		        	}
 			        
-			        if (fitness < Pw.fitnessValue && fitness != 0) {
+			        if (fitness < Pw.fitnessValue && fitness != 0 && !forceThresholdCensorship) {
 			            Z[ZLengthIdx].fitnessValue = fitness;
 			            Z[ZLengthIdx].sequenceNumber = LeapingSequence.clone();
+			            previousFitness = fitness;
 			        } 
 			        else {
-			        	// ************************************************************** Suspect!
+			        	// ####################################################################### Suspect!
 			        	// === Step 5 :: if step 4 can not product a better result ===
+			        	thresholdCounter++;
 			        	switch (randtype) {
 			        		case "uniformdist":// ramdomize with uniform distribution
 			        			Rd = randomGenerator.nextInt(n);
@@ -410,11 +409,15 @@ public class OriSFLA
 							collectData.CollectTestSequenceData(mistakeNFP[mistakeSelectedIndex], mistakeDegreeCode, LeapingPxSequence, mistakeFitness, "leaping");
 						}
 			        	
-			        	if (mistakeFitness < Pw.fitnessValue && mistakeFitness != 0) {
+			        	if (mistakeFitness < Pw.fitnessValue && mistakeFitness != 0 && !forceThresholdCensorship) {
 				            Z[ZLengthIdx].fitnessValue = mistakeFitness;
 				            Z[ZLengthIdx].sequenceNumber = LeapingPxSequence.clone();
+				            previousFitness = mistakeFitness;
 				        }
 			            else {
+			            	thresholdCounter = 0;
+//			            	System.out.println("Censorship called!");
+			            	// ####################################################################### Suspect!
 			            	// === Step 6 Censorship ===
 			            	// ----- Random all 0 to (n-1) to get one of input sequence.
 			            	int idxRandom = randomGenerator.nextInt(n);
@@ -503,7 +506,7 @@ public class OriSFLA
 			FitnessSequence nPx = null;
 			for (int i=0; i<m; i++)
 				for (int j=0; j<n; j++)
-					X1[CounterIdx++] = Y1[j][i];
+					X1[CounterIdx++] = Y1[i][j];
 			
 			double[] fitn = new double[TotalSampleSize];
 			for (int k=0; k<TotalSampleSize; k++)
@@ -519,6 +522,17 @@ public class OriSFLA
 			nPx = X1[0];
 			if (nPx.fitnessValue < Px.fitnessValue  && nPx.fitnessValue != 0)
 				Px = nPx;
+			
+			if (Px.fitnessValue == previousFitness) {
+				thresholdCounter++;
+			} else {
+				previousFitness = Px.fitnessValue;
+				thresholdCounter=0;
+				forceThresholdCensorship = false;
+			}
+			if (thresholdCounter >= checkingPercentage) {
+				forceThresholdCensorship = true;
+			}
 			
 			resultObject.fitnessValue.add(Px.fitnessValue);
 			best_out = Px;

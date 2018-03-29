@@ -153,9 +153,9 @@ public class Minkowski {
 		//---------------------------------------------------------------------------------------------------------------------------------------
 //		
 //		//algorithm 3
-		List<List<Edge>> cycleList;
-
+		List<List<Edge>> cycleList = null;
 		cycleList = boundarySearch(trackLineTripList);
+		
 		if(printMinkData){
 			for(List<Edge> cycle: cycleList){
 				System.out.println("cycle");
@@ -1447,8 +1447,13 @@ public class Minkowski {
 					}
 				}
 			}
-			Collections.sort(intersectionList, new TripIntersectionComparator());
 			
+			try {
+				Collections.sort(intersectionList, new TripIntersectionComparator());
+			}
+			catch (Exception e) {
+				
+			}
 			if(printBoundaryData){
 				System.out.println("intersectionList:");
 				for(TripIntersection in: intersectionList){

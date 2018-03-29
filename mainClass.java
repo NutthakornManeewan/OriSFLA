@@ -9,21 +9,18 @@ public class mainClass {
 		List<File> olderPolygonFile = new ArrayList<File>();
 		String olderPolygonFilePath = "C:\\Users\\Nutthakorn Maneewan\\workspace\\Original_SFLA\\resources\\Poly_0";
 		
-		int POLYGON_SIZE = 12;
+		int POLYGON_SIZE = 21;
 		int REPEATED_NUMBER = 9;
-		int REPEATED_POLYGON[] = {1,1,1,1,2,1,1,2,2};
+		int REPEATED_POLYGON[] = {3,3,3,2,2,2,2,2,2};
+		int M = 3;
+		int N = 7;
 		
-		for (int i=0; i<REPEATED_NUMBER; i++) 
-		{
-			for (int j=0; j<REPEATED_POLYGON[i]; j++) 
-			{
+		for (int i=0; i<REPEATED_NUMBER; i++) {
+			for (int j=0; j<REPEATED_POLYGON[i]; j++) {
 				String tmpFilePath = olderPolygonFilePath + Integer.toString(i+1) + ".txt";
 				olderPolygonFile.add(new File(tmpFilePath));
 			}
 		}
-		
-		int M = 3;
-		int N = 3;
 		
 		OriSFLA originalSFLAObject = new OriSFLA(100, 0.00005, M, N ,olderPolygonFile);
 		try {
